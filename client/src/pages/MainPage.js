@@ -1,15 +1,15 @@
-import React, {useState, useContext, useEffect} from 'react';
+import React, {useState, useContext} from 'react';
 import {Container, Form, Card, Button, Dropdown} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import {observer} from 'mobx-react-lite'
 
 import {ACCOUNT_ROUTE} from '../utils/consts';
-import { login, registration } from '../http/userAPI';
+import { login, registration } from '../http/authAPI';
 import {Context} from '../index';
 
 
 const MainPage = observer(() => {
-    const {user} = useContext(Context);
+    const {auth} = useContext(Context);
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,9 +39,10 @@ const MainPage = observer(() => {
             formData.append('photo', file);
             formData.append('sex', sex);
 
-            await registration(formData);
-
-            user.setIsAuth(true);
+            await registration(formData).then(data => {
+                auth.setIsAuth(true);
+                auth.setUserId(data.id);
+            });
             navigate(ACCOUNT_ROUTE);
             
         } catch (err) {
@@ -51,9 +52,12 @@ const MainPage = observer(() => {
 
     const onLogin = async () => {
         try {
-            await login(email, password);
-            user.setIsAuth(true);
+            await login(email, password).then(data => {
+                auth.setIsAuth(true);
+                auth.setUserId(data.id);
+            });            
             navigate(ACCOUNT_ROUTE);
+
         } catch(err) {
             alert(err);
         }        
@@ -107,7 +111,7 @@ const MainPage = observer(() => {
                                     <Dropdown.Item onClick={() => setSex('женский')} >женский</Dropdown.Item>
                             </Dropdown.Menu> 
                         </Dropdown>
-                        <div className="d-flex justify-content-between mt-3">                            
+                        <div className="d-flex justify-content-between mt-4">                            
                             <div>
                                 Есть аккаунт? 
                                 <Button 
@@ -142,7 +146,7 @@ const MainPage = observer(() => {
                             onChange={e => setPassword(e.target.value)}
                             type='password'
                         />
-                        <div className="d-flex justify-content-between mt-3">
+                        <div className="d-flex justify-content-between mt-4">
                             <div>
                                 Нет аккаунта? 
                                 <Button 

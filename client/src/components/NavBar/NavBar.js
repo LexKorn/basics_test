@@ -4,23 +4,24 @@ import {Navbar, Nav, Container, Button} from 'react-bootstrap';
 import { observer } from 'mobx-react-lite';
 
 import {Context} from '../../index';
-import { MAIN_ROUTE, ACCOUNT_ROUTE, PEOPLE_ROUTE } from "../../utils/consts";
+import { ACCOUNT_ROUTE, PEOPLE_ROUTE } from "../../utils/consts";
 
 import './navBar.sass';
 
 
 const NavBar = observer(() => {
-    const {user} = useContext(Context);
+    const {auth} = useContext(Context);
     const navigate = useNavigate();
 
     const logOut = () => {
-        user.setIsAuth(false);
+        auth.setIsAuth(false);
+        auth.setUserId('');
         localStorage.clear();
     };
 
     return (
         <>
-            {user.isAuth ?
+            {auth.isAuth ?
                 <Navbar collapseOnSelect expand="md" bg="dark" variant="dark" sticky="top">
                     <Container>
                         <NavLink className="nav-link" to={ACCOUNT_ROUTE}>ПРОФИЛЬ</NavLink>

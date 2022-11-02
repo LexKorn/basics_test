@@ -8,11 +8,11 @@ import { Context } from '../index';
 
 
 const AppRouter= observer(() => { 
-    const {user} = useContext(Context);
+    const {auth} = useContext(Context);
 
     return (
         <Routes>
-            {user.isAuth ? 
+            {auth.isAuth ? 
                 authRoutes.map(({path, Component}) => 
                     <Route key={path} path={path} element={<Component />} />
                 ):
@@ -20,7 +20,7 @@ const AppRouter= observer(() => {
                     <Route key={path} path={path} element={<Component />} />
                 )
             }
-            {user.isAuth ?
+            {auth.isAuth ?
                 <Route path='*' element={<Navigate to={ACCOUNT_ROUTE} />} />
                 :
                 <Route path='*' element={<Navigate to={MAIN_ROUTE} />} />
